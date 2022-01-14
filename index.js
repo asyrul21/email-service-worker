@@ -1,5 +1,8 @@
+const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
+const app = express();
+const http = require("http");
 
 // nodemailer
 const nodemailer = require("nodemailer");
@@ -25,11 +28,7 @@ amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
     channel.consume(
       QUENAME,
       async function (msg) {
-        console.log("WORKER");
-        console.log("Data:");
         const data = JSON.parse(msg.content.toString());
-        console.log(data);
-
         const { sender, recipient, subject, message } = data;
         const emailInfo = await MailTransporter.sendMail({
           from: sender,
@@ -44,3 +43,10 @@ amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
     );
   });
 });
+
+const server = http.createServer(app);
+const PORT = process.env.PORT || 3000;
+module.exports = server.listen(
+  PORT,
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
+);
