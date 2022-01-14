@@ -50,6 +50,10 @@ amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
   });
 });
 
+app.get("/api/", (req, res) => {
+  res.status(200).send("Notification Worker API is running");
+});
+
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 module.exports = server.listen(
