@@ -29,6 +29,8 @@ amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
       QUENAME,
       async function (msg) {
         const data = JSON.parse(msg.content.toString());
+        console.log("DATA:");
+        console.log(data);
         const { sender, recipient, subject, message } = data;
         const emailInfo = await MailTransporter.sendMail({
           from: sender,
