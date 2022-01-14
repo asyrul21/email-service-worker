@@ -21,6 +21,7 @@ const QUENAME = "xendit-trial-notifs";
 
 amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
   conn.createChannel(function (err, channel) {
+    console.log("Worker Up and Running");
     channel.consume(
       QUENAME,
       async function (msg) {
