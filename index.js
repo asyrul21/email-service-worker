@@ -42,7 +42,12 @@ amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
 
         if (eventId) {
           // update Triggered Event here
-          await EventsService.updateStatus(eventId, "delivered");
+          const updatedEvent = await EventsService.updateStatus(
+            eventId,
+            "delivered"
+          );
+          console.log("Triggered Event Updated");
+          console.log(updatedEvent);
         }
       },
       { noAck: true }
