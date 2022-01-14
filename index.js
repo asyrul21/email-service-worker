@@ -19,6 +19,7 @@ var MailTransporter = nodemailer.createTransport({
 
 // rabbitmq
 const amqp = require("amqplib/callback_api");
+const EventsService = require("./API/triggeredEventService");
 const cloudRabbitMQConnURL = process.env.CLOUD_RABBIT_MQ_URL;
 const QUENAME = "xendit-trial-notifs";
 
@@ -31,7 +32,7 @@ amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
         const data = JSON.parse(msg.content.toString());
         console.log("DATA:");
         console.log(data);
-        const { sender, recipient, subject, message } = data;
+        const { sender, recipient, subject, message, eventId } = data;
         const emailInfo = await MailTransporter.sendMail({
           from: sender,
           to: recipient,
@@ -39,7 +40,10 @@ amqp.connect(cloudRabbitMQConnURL, function (err, conn) {
           html: message,
         });
 
-        // update Triggered Event here
+        if (eventId) {
+          // update Triggered Event here
+          await EventsService.updateStatus(eventId, "delivered");
+        }
       },
       { noAck: true }
     );
